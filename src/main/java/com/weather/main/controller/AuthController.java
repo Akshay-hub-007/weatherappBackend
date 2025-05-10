@@ -42,10 +42,12 @@ public class AuthController {
             System.out.println(token);
             System.out.println(token + "  generated");
             Cookie cookie = new Cookie("jwt", token);
-            cookie.setHttpOnly(true); // Prevents JavaScript access (protects against XSS)
-            cookie.setSecure(true); // Ensures cookie is sent only over HTTPS
-            cookie.setPath("/"); // Send cookie with all requests to your domain
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true); // keep this if your site is HTTPS (e.g. Railway + custom domain)
+            cookie.setPath("/");
             cookie.setMaxAge(24 * 60 * 60);
+            cookie.setAttribute("SameSite", "None"); // allow cross-site cookies (important for frontend-backend
+                                                     // separation)
 
             response.addCookie(cookie);
 
