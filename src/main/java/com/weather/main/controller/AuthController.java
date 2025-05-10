@@ -1,6 +1,5 @@
 package com.weather.main.controller;
 
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,20 +31,20 @@ public class AuthController {
 
     @Autowired
     JWTUtil jwtUtil;
+
     @PostMapping("/authenticate")
     public ResponseEntity<String> generateToken(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
         try {
             authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
-            );
-    
+                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+
             String token = jwtUtil.generateToken(authRequest.getUsername());
             System.out.println(token);
-            System.out.println(token+ "  generated" );
+            System.out.println(token + "  generated");
             Cookie cookie = new Cookie("jwt", token);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(false); // secure only if NOT dev
-            cookie.setPath("/");
+            cookie.setHttpOnly(true); // Prevents JavaScript access (protects against XSS)
+            cookie.setSecure(true); // Ensures cookie is sent only over HTTPS
+            cookie.setPath("/"); // Send cookie with all requests to your domain
             cookie.setMaxAge(24 * 60 * 60);
 
             response.addCookie(cookie);
